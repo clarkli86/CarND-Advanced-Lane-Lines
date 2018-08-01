@@ -10,8 +10,8 @@ def calibrate_camera():
     Calibrate camera using pre-captured images
     https://docs.opencv2.org/3.4.0/dc/dbb/tutorial_py_calibration.html
     """
-    nx = 6
-    ny = 9
+    nx = 9
+    ny = 6
     # termination criteria
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
@@ -40,8 +40,9 @@ def calibrate_camera():
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
     return mtx, dist
 
-def test_camera(mtx, dist):
-    img = cv2.imread('camera_cal/calibration1.jpg')
+def test_camera(mtx, dist, filename):
+    img = cv2.imread(filename)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     h,  w = img.shape[:2]
     # return undistorted image with minimum unwanted pixels. It's okay to remove some pixesl at image corners.
     newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w,h), 0, (w,h))
@@ -58,4 +59,5 @@ def test_camera(mtx, dist):
     plt.show()
 
 mtx, dist = calibrate_camera()
-test_camera(mtx, dist)
+#test_camera(mtx, dist, 'camera_cal/calibration1.jpg')
+#test_camera(mtx, dist, 'test_images/straight_lines1.jpg')
