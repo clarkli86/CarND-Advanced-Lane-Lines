@@ -129,13 +129,15 @@ I implemented this step in code block **8**, **9**, and **10** of `advanced_lane
 ![alt text][filled_poly]
 ![alt text][final]
 
+All the test images have been processed and placed at `output_images` directory.
+
 ---
 
 ### Pipeline (video)
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](https://github.com/clarkli86/CarND-Advanced-Lane-Lines/blob/master/output_videos/project_video.mp4)
 
 To make the piple work more efficently for video stream, the following changes have been made:
 1. When looking for lane line pixels in **Step 4**, there is no need to run `histogram()` from the bottom. A better approach is to reuse the polynominal from last frame. In the new frame, we firstly find all the pixels within a horizontal margin around the last poly line. Then these pixels will be used to fit the new polynominal. The old approach will still be applied if a new polynominal couldn't be fit.
@@ -147,8 +149,17 @@ To make the piple work more efficently for video stream, the following changes h
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+My pipeline fails when the road edge is very close to lane lines like in `challenge_video.mp4`. It is quite challenging to find the pixels which really belong to both lane lines.
+
+To overcome this difficulty, more investigation could be on the color thresholds to only take white or yellow pixels.
+
+My pipeline also fails when the radius of curve is small like in `harder_challenge_video.mp4`. The lane lines get off the side of screen and make it hard for a perfect polynominal fit.
+
+To mitigate this issue, we could utilise the input from GPS and road infrastructure. After receiving `MAP` messages from `Roadside Units`[3], the vehicle can match itself to the closet lane using highly accurate GPS position. Then the lane position and radius of curve from `MAP` messages can be used to correct the pipeline output.
+
+Another possible resloution is to craete a bird's eye view with multiple fish-eye cameras [3]. This bird's eye view should give more info in the surrounding area and a better polynominal fit to lane lines.
 
 ### References
 1. https://docs.opencv.org/3.1.0/dc/dbb/tutorial_py_calibration.html
 2. https://classroom.udacity.com/nanodegrees/nd013/parts/fbf77062-5703-404e-b60c-95b78b2f3f9e/modules/2b62a1c3-e151-4a0e-b6b6-e424fa46ceab/lessons/096009a1-3d76-4290-92f3-055961019d5e/concepts/2f928913-21f6-4611-9055-01744acc344f
+3. https://www.transportation.institute.ufl.edu/wp-content/uploads/2017/04/HNTB-SAE-Standards.pdf
